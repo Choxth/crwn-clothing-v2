@@ -1,6 +1,13 @@
 import { initializeApp } from 'firebase/app'; 
 
-import { getAuth, signInWithRedirect, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
+import { 
+  getAuth, 
+  signInWithRedirect, 
+  signInWithPopup, 
+  GoogleAuthProvider, 
+  createUserWithEmailAndPassword, 
+  FacebookAuthProvider 
+} from 'firebase/auth'
 
 import {
   getFirestore, doc, getDoc, setDoc 
@@ -18,22 +25,36 @@ const firebaseConfig = {
 
   // Initialize Firebase
   const firebaseApp = initializeApp(firebaseConfig);
-  const provider = new GoogleAuthProvider(); 
+  const googleProvider = new GoogleAuthProvider(); 
+  const facebookProvider = new FacebookAuthProvider(); 
 
 
-  provider.setCustomParameters( { 
+  googleProvider.setCustomParameters( { 
     prompt: 'select_account' 
   }); 
 
   export const auth = getAuth();
-  export const signInWithGooglePopup = () => signInWithPopup(auth, provider);
+  export const signInWithGooglePopup = () => signInWithPopup(auth, googleProvider);
+  export const signInWithGoogleRedirect = () => signInWithRedirect(auth, googleProvider)
 
   export const db = getFirestore();
 
-  export const createUserDocumentFromAuth = async(userAuth) => { 
 
 
-    const  userDocRef = doc(db, 'users',  userAuth.uid); 
+  /**
+   * Fetches a userDocRef object from the authentication chain, either from a new registered google user 
+   * who has not used the application before, or one who has already gone through the process. 
+   * If the user returned does not exist, we create it with setDoc 
+   * In either event, we return the database document descriptor for the user
+   */
+  export const createUserDocumentFromAuth = async(userAuth, additionalInformation = {} ) => { 
+
+    if (!userAuth) { 
+      console.error("missing userAuth in createUserDocFromAuth "); 
+      throw new Error("Exception");
+    }
+
+    const  userDocRef = doc(db, 'users',  userAuth.uid);  // a doc descriptor that points to the user 
     const userSnapshot = await getDoc(userDocRef)
 
     // This is the way of handling the passport interaction. Remember there, we got from facebook an 
@@ -54,7 +75,13 @@ const firebaseConfig = {
       // no notion of collections here. 
       try { 
 
-        await setDoc( userDocRef,{ displayName, email, createdAt } ); 
+        await setDoc( 
+          userDocRef, { 
+            displayName, 
+            email, 
+            createdAt, 
+          ...additionalInformation
+         } ); 
 
       }catch (e) { 
 
@@ -67,15 +94,15 @@ const firebaseConfig = {
     console.log('userDocRef', userDocRef);
     return userDocRef; 
   
+  }
 
+  // the instructor has these functions within this utils module to separate the concerns with regards to 
+  // potentially several front end modules and the libraries he's working with. This function is 
+  // specific to firebase, so this keeps firebase out of his front end code in this single utils module
+  export const createAuthUserWithEmailAndPassword = async (email, password) => { 
 
+    if (!email || !password) return; 
 
-
-    // check if userData exists 
-      // return userData 
-
-    // else 
-
-    // create/set the document with the data from the usrAuth call in my collection
+    return await createUserWithEmailAndPassword(auth, email, password);
 
   }
