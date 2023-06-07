@@ -7,7 +7,9 @@ import {
   GoogleAuthProvider, 
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
-  FacebookAuthProvider 
+  FacebookAuthProvider , 
+  signOut, 
+  onAuthStateChanged 
 } from 'firebase/auth'
 
 import {
@@ -112,5 +114,15 @@ const firebaseConfig = {
 
     if (!email || !password) return; 
     return await signInWithEmailAndPassword(auth, email, password);
+  } 
 
-  }
+    
+  export const signOutUser = async () => { 
+    console.log('SignOutUser called'); 
+    console.log(new Error().stack);
+    await signOut(auth); 
+  } 
+
+
+  export const onAuthStateChangedListener = (callback) => 
+      onAuthStateChanged(auth, callback ); 

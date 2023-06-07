@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { loginInWithEmailAndPassword, signInWithGooglePopup, createUserDocumentFromAuth } from '../../utils/firebase.utils'
 import FormInput from '../form-input/form-input.component';
 import Button from '../button/button.component';
+
+
 // import '../sign-up-form/sign-up-form.styles.scss'
 import './sign-in-form.styles.scss'
 
@@ -21,16 +23,15 @@ const SignInForm = () => {
 
     const { email, password } = formFields;
 
-
     const resetFormFields = () => {
         setFormFields(defaultFormFields);
     }
 
     // The handler for the sign-in-with-google button
     const signInWithGoogle = async () => {
-        const { user } = await signInWithGooglePopup();
-        await createUserDocumentFromAuth(user);
-    }
+        await signInWithGooglePopup();
+    } 
+        
 
     // there is the fireAuth sign in and then there is the user document in firebase itself
     const handleSubmit = async (event) => {
@@ -39,10 +40,12 @@ const SignInForm = () => {
 
         try {
 
-            const response = await loginInWithEmailAndPassword(email, password);
+            // This is the original line that works 
+            // const response = await loginInWithEmailAndPassword(email, password);
 
-            console.log('responseuser', response);
-            alert('responseuser', response);
+            // how is this different? I need to learn this
+            const { user } = await loginInWithEmailAndPassword(email, password);
+
             resetFormFields();
 
         } catch (error) {
