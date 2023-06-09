@@ -13,15 +13,7 @@ import Authentication  from './routes/authentication/authentication.component';
 
 
 
-const Shop = () => { 
-
-  return ( 
-    <div>
-    <h1> This is the shop shop page</h1>
-    </div>
-  )
-
-}
+import Shop from './routes/shop/shop.component'; 
 
 const App = () => {
 
