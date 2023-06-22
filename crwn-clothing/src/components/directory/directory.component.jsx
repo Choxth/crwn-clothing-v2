@@ -1,5 +1,5 @@
 
-import CategoryItem from '../category-item/category-item.component'
+import DirectoryItem from '../directory-item/directory-item.component'
 import './directory.styles.scss'; 
 
 
@@ -21,7 +21,7 @@ const Directory = ({categories}) => (
     // first html is encountered, we're in jsx mode
 
     categories.map ((category) =>  (
-        <CategoryItem key={category.id} category={category} /> 
+        <DirectoryItem key={category.id} category={category} /> 
       ))
       // and then some more jsx.. :) 
       

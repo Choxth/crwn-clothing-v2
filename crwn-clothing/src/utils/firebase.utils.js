@@ -9,11 +9,18 @@ import {
   signInWithEmailAndPassword, 
   FacebookAuthProvider , 
   signOut, 
-  onAuthStateChanged 
+  onAuthStateChanged
 } from 'firebase/auth'
 
 import {
-  getFirestore, doc, getDoc, setDoc 
+  getFirestore, 
+  doc, 
+  getDoc, 
+  setDoc, 
+  collection, 
+  writeBatch, 
+  query, 
+  getDocs
 } from 'firebase/firestore';
 
 
@@ -42,7 +49,43 @@ const firebaseConfig = {
 
   export const db = getFirestore();
 
+  // Going to use this to upload my records from shop-data to firebase 
+  export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => { 
 
+    const collectionRef = collection (db, collectionKey);
+
+    // use a batch to do all the writing in a transaction 
+    const batch = writeBatch(db);
+    objectsToAdd.forEach( (object) => { 
+      const docRef = doc(collectionRef, object.title.toLowerCase() ); 
+      // docRef will point to a document reference, even if the document hasn't been created yet. 
+      // That's an interesting approach there, really
+      batch.set(docRef, object);
+    }); 
+    await batch.commit();
+    console.log('writing to firebase, done!');
+  }
+
+  // Instructor has found that the changes Google makes to firestore means that these 'helper' functions 
+  // are necessary to keep the shit out of your code. Imagine doing all of this for all the access functions 
+  // in MOngo! 
+  export const getCategoriesAndDocuments = async () => { 
+    const collectionRef = collection(db, 'categories');
+
+    const q  = query(collectionRef); 
+    const querySnapshot = await getDocs(q);
+
+    const categoryMap = querySnapshot.docs.reduce( (acc, docSnapshot) => 
+    {
+      const {title, items } = docSnapshot.data();
+      acc[title.toLowerCase()] = items;
+      return acc; 
+
+    }, {}); 
+
+    return categoryMap;
+
+  }
 
   /**
    * Fetches a userDocRef object from the authentication chain, either from a new registered google user 
