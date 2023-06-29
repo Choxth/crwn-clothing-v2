@@ -8,15 +8,10 @@ import { CartIconContainer, ItemCount, ShoppingIcon } from  './cart-icon.styles.
 
 const CartIcon = () => { 
 
-    const { isCartOpen, setIsCartOpen, cartItems, cartCount} = useContext (CartContext);
+    const { isCartOpen, setIsCartOpen,  cartCount} = useContext (CartContext);
 
     const toggleCartOpen = () =>  { 
         setIsCartOpen (!isCartOpen);
-    }
-
-    // This function is re-run each time the page is rendered
-    const countItems = () => { 
-        return cartItems.reduce( (total, cartItem) => total + cartItem.quantity, 0 ); 
     }
 
     /* 

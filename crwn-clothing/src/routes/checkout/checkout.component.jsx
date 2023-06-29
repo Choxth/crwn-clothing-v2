@@ -8,13 +8,7 @@ import CheckoutItem from '../../components/checkout-item/checkout-item.component
 
 const Checkout = () => {
 
-    const { cartItems, addItemToCart, cartCount, cartTotal, decrementItemInCart, removeCategory, } = useContext(CartContext);
-
-    const itemPrice = (item) => {
-        const { price, quantity } = item;
-        const num = price * quantity;
-        return formatAsPrice(num);
-    }
+    const { cartItems,  cartTotal } = useContext(CartContext);
 
     const formatAsPrice = (num) => {
         return num.toLocaleString(undefined, {
@@ -46,9 +40,9 @@ const Checkout = () => {
             </div>
 
             {cartItems.map((cartItem) => {
-                const { id, name, quantity, price } = cartItem;
+                const { id } = cartItem;
                 return (
-                    <CheckoutItem key={cartItem.id} cartItem={cartItem} />
+                    <CheckoutItem key={id} cartItem={cartItem} />
                 );
             })}
 

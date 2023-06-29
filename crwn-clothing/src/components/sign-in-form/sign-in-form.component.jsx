@@ -44,7 +44,7 @@ const SignInForm = () => {
             // const response = await loginInWithEmailAndPassword(email, password);
 
             // how is this different? I need to learn this
-            const { user } = await loginInWithEmailAndPassword(email, password);
+            await loginInWithEmailAndPassword(email, password);
 
             resetFormFields();
 

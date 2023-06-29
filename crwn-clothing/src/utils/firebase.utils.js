@@ -7,7 +7,7 @@ import {
   GoogleAuthProvider, 
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
-  FacebookAuthProvider , 
+  // FacebookAuthProvider , 
   signOut, 
   onAuthStateChanged
 } from 'firebase/auth'
@@ -36,7 +36,7 @@ const firebaseConfig = {
   // Initialize Firebase
   const firebaseApp = initializeApp(firebaseConfig);
   const googleProvider = new GoogleAuthProvider(); 
-  const facebookProvider = new FacebookAuthProvider(); 
+  // const facebookProvider = new FacebookAuthProvider(); 
 
 
   googleProvider.setCustomParameters( { 

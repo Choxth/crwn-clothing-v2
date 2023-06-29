@@ -19,7 +19,7 @@ const CategoriesPreview = () => {
     // <Fragment> allows you to group a list of children witout adding extra nodes to the DOM. 
     // So here we have nested framents, once for the outer categories, and once for the individual products
     return (
-        <>
+        <Fragment>
             {
                 Object.keys(categoriesMap).map(title => {
 
@@ -31,7 +31,7 @@ const CategoriesPreview = () => {
 
                 } ) 
             }
-        </>
+        </Fragment>
 
     );
 }
