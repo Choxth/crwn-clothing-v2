@@ -38,6 +38,7 @@ const firebaseConfig = {
   const googleProvider = new GoogleAuthProvider(); 
   // const facebookProvider = new FacebookAuthProvider(); 
 
+  console.log('app = ', firebaseApp.size);
 
   googleProvider.setCustomParameters( { 
     prompt: 'select_account' 
