@@ -1,7 +1,13 @@
-import { createContext, useState, useEffect } from 'react'
+import { createContext, useEffect, useReducer } from 'react'
 
 
+export const CART_ACTION_TYPES = {
+    SET_CART_ITEMS: 'SET_CART_ITEMS',
+    SET_CART_OPEN: 'SET_CART_OPEN',
 
+}
+
+// helper function to add a new product to the array of cartItems
 const addCartItem = (cartItems, productToAdd) => {
 
     // Got to return new arrays of new items, so that we don't mutate the original list
@@ -53,6 +59,41 @@ const removeItemEntirely = (cartItems, itemToRemove) => {
     });
 }
 
+/**
+ *
+ * @param state
+ * @param action
+ * @returns new cart object with action applied to state
+ */
+const cartReducer = (state, action) => {
+
+    const {type, payload} = action;
+
+    // here, state refers to the entire cart state, so we operate on small
+    // portions therein, using the reducer. Well actually, we don't need two of these, since the 
+    // items, count, and total are all completely inter-related. so one setItems function to rule them all 
+    // depends on your 
+    switch (type) {
+        case CART_ACTION_TYPES.SET_CART_ITEMS:
+            return {
+                ...state,   // spread the previous state, then add the payload that we have defined
+                ...payload  // set the payload's values by property. This is such an unusual syntax
+            }
+            break;
+
+        case CART_ACTION_TYPES.SET_CART_OPEN:
+            return {
+                ...state,
+                isCartOpen: payload
+            }
+            break;
+
+        default:
+            // error
+            throw new Error(`Unhandled type ${type} in cartReducer`);
+
+    }
+}
 
 // This CartContext 'object' keeps the items in the shopping cart in a context. 
 // This context should again be available everywhere the UserContext is, so that we always 
@@ -60,64 +101,54 @@ const removeItemEntirely = (cartItems, itemToRemove) => {
 export const CartContext = createContext({
 
     isCartOpen: false,
-    setIsCartOpen: () => { },
-
-    // Yes, you can have two properties in the context 
     cartItems: [],
-
-    addItemToCart: () => { },
-
-    decrementItemInCart: () => {}, 
-
-    removeCategory: () => {}, 
-
+  
     // another way to do the cart item counting is to keep a state var that is updated with 
     // side effects 
     cartCount: 0,
 
     // In the same effect, keep track of the cart total value
-    cartTotal: 0
+    cartTotal: 0, 
+
+    setIsCartOpen: () => { },
+    addItemToCart: () => { },
+    decrementItemInCart: () => {}, 
+    removeCategory: () => {}, 
 
 });
 
-/* 
-         
-    // the nominal product object looks like
-    product { 
-        id, 
-        name, 
-        price, 
-        imageUrl        
-    }
- 
-    // our desired cartItem object looks the same with a quantity
-     cartItem { 
-        id, 
-        name, 
-        price, 
-        imageUrl, 
-        quantity
-    }
- 
- 
-*/
+// This was correct
+const INITIAL_CART_STATE = {
+    isCartOpen: false,  // whether the cart is open or not
+    cartItems: [], // the cart items
+    cartCount: 0,  // number of all items in cart
+    cartTotal: 0   // total cart value
+}
 
-// 
+
 export const CartProvider = ({ children }) => {
 
-    // Ah, useState returns a pair of values, the current state and a function that updates it. 
-    const [isCartOpen, setIsCartOpen] = useState(false);
-    const [cartItems, setCartItems] = useState([]);
-    const [cartCount, setCartCount] = useState(0);
-    const [cartTotal, setCartTotal] = useState(0);
+    // useReducer returns a state value, and a dispatch function that allows you update parts of it
+    const [state, dispatch] = useReducer(cartReducer, INITIAL_CART_STATE);
 
+    const { isCartOpen, cartItems, cartCount, cartTotal } = state;
 
-    // this only re-calculates when the CartItems changes, which is better than counting it in the 
-    // icon, which see
-    useEffect(() => {
-        setCartCount(cartItems.reduce((total, cartItem) => total + cartItem.quantity, 0));
-        setCartTotal(cartItems.reduce((totalCost, cartItem) => totalCost + (cartItem.quantity * cartItem.price), 0))
-    }, [cartItems])
+    const setCartItems = (cartItems) => {
+
+        const action = { 
+            type: CART_ACTION_TYPES.SET_CART_ITEMS, 
+            payload: { 
+                cartItems: cartItems, 
+                cartCount: cartItems.reduce((total, cartItem) => total + cartItem.quantity, 0), 
+                cartTotal: cartItems.reduce((totalCost, cartItem) => totalCost + (cartItem.quantity * cartItem.price), 0)
+            }
+        }
+        dispatch(action); 
+    }
+    const setIsCartOpen = (cartOpen) => {
+        dispatch({type: CART_ACTION_TYPES.SET_CART_OPEN, payload: cartOpen})
+    }
+
 
     // or increment the count if it already does
     const addItemToCart = (productToAdd) => {

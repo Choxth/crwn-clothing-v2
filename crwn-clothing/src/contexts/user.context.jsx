@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from 'react'
+import { createContext,  useEffect, useReducer } from 'react'
 
 import { onAuthStateChangedListener, createUserDocumentFromAuth} from '../utils/firebase.utils';
 
@@ -13,15 +13,55 @@ export const  UserContext = createContext({
 
 }); 
 
+// enum of allowable actions
+export const USER_ACTION_TYPES = { 
+    SET_CURRENT_USER : 'SET_CURRENT_USER'
+}
+
+// This isn't very clear at all. based on some type, we want to return an object that has been 
+// updated in some way. 
+// sometimes you can use state to help compute the next value
+const userReducer = (state, action) => { 
+
+    // console.log('-->Dispatched', state, 'action:', action);
+    const { type, payload} = action; 
+  
+    switch (type) { 
+
+        case 'SET_CURRENT_USER': 
+            return { 
+                ...state,   // spread the previous state, then add the payload that we have defined
+                currentUser: payload
+            }
+        break; 
+
+        default: 
+            // error 
+            throw new Error(`Unhandled type ${type} in userReducer`); 
+
+    }
+}
+
+
+const INITIAL_STATE = { 
+    currentUser: null
+}
 
 // last addition, sign out the user, so that we can go forward and re-sign-back-in
 export const UserProvider = ({ children } ) => { 
-    const [currentUser, setCurrentUser] = useState(null);
+    // const [currentUser, setCurrentUser] = useState(null);
+
+    const [state, dispatch] = useReducer(userReducer, INITIAL_STATE); 
+    const {currentUser} = state;
+    // console.log('--> CUrrentUser:', currentUser);
+
+    const setCurrentUser = (user) => { 
+        dispatch({type: USER_ACTION_TYPES.SET_CURRENT_USER, payload: user})
+    }
+
     const value={currentUser, setCurrentUser}; 
 
-
-
-    // Remember: useEffect ( useSideEffects ) are react hooks, meant to duplicate the class based 
+    // Remember: useEffect ( useSideEffects ) are react hooks, meant to duplicate the class based
     // rendering from early react. 
 
     // it is set up that the framework will run whatever useEffect() returns, when the 

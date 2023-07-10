@@ -9,9 +9,11 @@ import { CategoriesContext } from '../../contexts/categories.context';
 // This component displays all the products of a given category in a shopping page
 const Category = () => {
 
+    // this would be analagous to gameType 
     const { category } = useParams();  // category destructured from the params object which is 
     const { categoriesMap } = useContext(CategoriesContext);
 
+    // of all the categories in the categoriesContext, this item saves the products for the category, 
     const [products, setProducts] = useState(categoriesMap[category]);
 
     // why is this code doing this? 

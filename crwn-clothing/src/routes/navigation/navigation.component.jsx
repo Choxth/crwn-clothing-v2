@@ -32,7 +32,7 @@ const Navigation = () => {
                         who thought dynamically changing the structure was a bad idea? 
                      */  }
                     {currentUser ? (
-                        <NavLink as='span' onClick={signOutUser}> SIGN OUT</NavLink>
+                        <NavLink as="span" onClick={signOutUser}> SIGN OUT</NavLink>
                     ) : (
                         <NavLink to='/auth'>
                             SIGN IN
