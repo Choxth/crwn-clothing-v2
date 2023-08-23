@@ -1,9 +1,13 @@
 
-import { useContext, Fragment } from 'react';
+import { Fragment } from 'react';
 
 
-import { CategoriesContext } from '../../contexts/categories.context'
+// import { CategoriesContext } from '../../contexts/categories.context'
 import CategoryPreview from '../../components/category-preview/category-preview.component';
+import {selectCategoriesMap } from '../../store/categories/category.selector.js'
+
+import {useSelector} from 'react-redux';
+
 
 import './categories-preview.styles.scss'; 
 
@@ -12,8 +16,9 @@ import './categories-preview.styles.scss';
 
 const CategoriesPreview = () => {
 
+    const categoriesMap = useSelector(selectCategoriesMap) || [];
 
-    const { categoriesMap } = useContext(CategoriesContext);
+    // const { categoriesMap } = useContext(CategoriesContext);
 
     // I have no idea how the javascript and the markup go together here. 
     // <Fragment> allows you to group a list of children witout adding extra nodes to the DOM. 
@@ -21,6 +26,7 @@ const CategoriesPreview = () => {
     return (
         <Fragment>
             {
+                
                 Object.keys(categoriesMap).map(title => {
 
                     const products = categoriesMap[title];

@@ -1,5 +1,11 @@
 import { Route, Routes } from 'react-router-dom';
 
+import { useEffect } from 'react'
+
+import { useDispatch } from 'react-redux';
+import { setCurrentUser } from './store/user/user.action';
+import { onAuthStateChangedListener, createUserDocumentFromAuth} from './utils/firebase.utils';
+
 import Home from '../src/routes/home/home.component'
 import Navigation from '../src/routes/navigation/navigation.component'
 import './index.scss'
@@ -9,7 +15,23 @@ import Shop from './routes/shop/shop.component';
 
 const App = () => {
 
+  const dispatch = useDispatch(); 
+  // This is an early requirement for the application
+  useEffect(() => { 
+    
+    const unsubscribe = onAuthStateChangedListener( (user) => {
 
+        console.log('UserProvider.User from listener == ', user);
+        if (user) { 
+            createUserDocumentFromAuth(user);
+        } 
+
+        dispatch (setCurrentUser(user));
+    }); 
+
+    return unsubscribe;
+
+}, [] ); 
   // when ever a path matches the path, relative to it's parent, it will render the element. 
   // so we have / + shop + /* all mapping to shop component 
 

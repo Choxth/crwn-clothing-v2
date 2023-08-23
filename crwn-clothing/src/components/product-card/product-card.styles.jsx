@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const ProductCardContainer = styled.div`
+export const ProductCartContainer = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -18,7 +18,6 @@ export const ProductCardContainer = styled.div`
   button {
     width: 80%;
     opacity: 0.7;
-
     position: absolute;
     top: 255px;
     display: none;
@@ -34,16 +33,15 @@ export const ProductCardContainer = styled.div`
       display: flex;
     }
   }
-  `;
-  
+`;
+
 export const Footer = styled.div`
   width: 100%;
   height: 5%;
   display: flex;
   justify-content: space-between;
   font-size: 18px;
-`;   
-
+`;
 
 export const Name = styled.span`
   width: 90%;

@@ -1,5 +1,5 @@
 import { createContext, useEffect, useReducer } from 'react'
-import { getCategoriesAndDocuments } from '../utils/firebase.utils';
+// import { getCategoriesAndDocuments } from '../utils/firebase.utils';
 // import SHOP_DATA from '../shop-data.js';
 
 // import { addCollectionAndDocuments } from '../utils/firebase.utils.js';
@@ -9,7 +9,6 @@ import { getCategoriesAndDocuments } from '../utils/firebase.utils';
 export const USER_ACTION_TYPES = { 
     SET_CURRENT_CATEGORIES_MAP: 'SET_CURRENT_CATEGORIES_MAP'
 }
-
 
 const INITIAL_STATE = { 
     categoriesMap: { 
@@ -84,13 +83,13 @@ export const CategoriesProvider = ({ children }) => {
     // pass it an async function, but instead create an internal async function to call our function
     useEffect(() => {
 
-        const getCategoriesMap = async () => {
-            const categoryMap =  await getCategoriesAndDocuments();
-            console.log('Got a categoryMap:', categoryMap);
-            setCurrentCategoriesMap(categoryMap);
-        }
+        // const getCategoriesMap = async () => {
+        //     const categoryMap =  await getCategoriesAndDocuments();
+        //     console.log('Got a categoryMap:', categoryMap);
+        //     setCurrentCategoriesMap(categoryMap);
+        // }
 
-        getCategoriesMap();
+        // getCategoriesMap();
 
     }, [])
 
