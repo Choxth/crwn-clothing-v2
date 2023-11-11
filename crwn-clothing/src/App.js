@@ -3,8 +3,6 @@ import { Route, Routes } from 'react-router-dom';
 import { useEffect } from 'react'
 
 import { useDispatch } from 'react-redux';
-import { setCurrentUser } from './store/user/user.action';
-import { onAuthStateChangedListener, createUserDocumentFromAuth} from './utils/firebase.utils';
 
 import Home from '../src/routes/home/home.component'
 import Navigation from '../src/routes/navigation/navigation.component'
@@ -13,23 +11,23 @@ import Authentication from './routes/authentication/authentication.component';
 import Checkout from './routes/checkout/checkout.component';
 import Shop from './routes/shop/shop.component';
 
+import { checkUserSession } from './store/user/user.action';
+
 const App = () => {
 
   const dispatch = useDispatch(); 
   // This is an early requirement for the application
   useEffect(() => { 
     
-    const unsubscribe = onAuthStateChangedListener( (user) => {
+    // Trying to uncouple the original from being here. This should be converted to a single 
+    // promises based check if there is a current user, ( everywhere? )
+    // using sagas. 
 
-        console.log('UserProvider.User from listener == ', user);
-        if (user) { 
-            createUserDocumentFromAuth(user);
-        } 
+    // instead of having this state listener that responds every time the state updates, 
+    // we're going to wrap this in a promise inside of firebase utils. 
 
-        dispatch (setCurrentUser(user));
-    }); 
-
-    return unsubscribe;
+    dispatch(checkUserSession());
+    // return unsubscribe;
 
 }, [] ); 
   // when ever a path matches the path, relative to it's parent, it will render the element. 

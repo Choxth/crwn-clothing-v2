@@ -1,26 +1,24 @@
-// enum of allowable actions
-import { USER_ACTION_TYPES } from "./user.types";
+import { USER_ACTION_TYPES } from './user.types';
 
-export const userReducer = (state = INITIAL_STATE, action) => { 
+const INITIAL_STATE = {
+  currentUser: null,
+  isLoading: false, 
+  error: null, 
+};
 
-    // console.log('-->Dispatched', state, 'action:', action);
-    const { type, payload} = action; 
-  
-    switch (type) { 
+export const userReducer = (state = INITIAL_STATE, action) => {
+  const { type, payload } = action;
 
-        case USER_ACTION_TYPES.SET_CURRENT_USER: 
-            return { 
-                ...state,   // spread the previous state, then add the payload that we have defined
-                currentUser: payload
-            }
-        break; 
-
-        default: 
-          return state;   // in the 
-    }
-}
-
-
-const INITIAL_STATE = { 
-    currentUser: null
-}
+  switch (type) {
+    case USER_ACTION_TYPES.SIGN_IN_SUCCESS:
+      return { ...state, currentUser: payload };
+    case USER_ACTION_TYPES.SIGN_OUT_SUCCESS: 
+        return { ...state, currentUser: null }; 
+    case USER_ACTION_TYPES.SIGN_OUT_FAILED:       
+    case USER_ACTION_TYPES.SIGN_UP_FAILED:
+    case USER_ACTION_TYPES.SIGN_IN_FAILED: 
+      return {...state, error: payload}
+    default:
+      return state;
+  }
+};

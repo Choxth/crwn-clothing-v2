@@ -1,9 +1,13 @@
 import { useState } from 'react';
 
-import { createAuthUserWithEmailAndPassword, createUserDocumentFromAuth } from '../../utils/firebase.utils';
+// import { createAuthUserWithEmailAndPassword, createUserDocumentFromAuth } from '../../utils/firebase.utils';
 import  FormInput  from '../form-input/form-input.component';
 import Button from '../button/button.component'; 
 import {SignUpContainer} from './sign-up-form.styles.jsx'
+import { useDispatch } from 'react-redux';
+import { USER_ACTION_TYPES } from '../../store/user/user.types';
+
+import { signUpStart } from '../../store/user/user.action';
 
 const defaultFormFields = {
     displayName: '',
@@ -20,6 +24,7 @@ const SignUpForm = () => {
     const [formFields, setFormFields] = useState(defaultFormFields);
 
     const { displayName, email, password, confirmPassword } = formFields;
+    const dispatch = useDispatch();
 
 
     const resetFormFields = () => { 
@@ -35,10 +40,12 @@ const SignUpForm = () => {
         }
         try {
 
-            const { user } = await createAuthUserWithEmailAndPassword(email, password);
-            console.log('responseuser', user);
+            // const { user } = await createAuthUserWithEmailAndPassword(email, password);
+            // console.log('responseuser', user);
 
-            await createUserDocumentFromAuth( user, { displayName }); 
+            dispatch(signUpStart(email, password, displayName) );
+
+            // await createUserDocumentFromAuth( user, { displayName }); 
             // confirm for them that they've signed up somehow 
             
             resetFormFields();

@@ -1,36 +1,46 @@
-import { compose, legacy_createStore,  applyMiddleware } from 'redux'; 
-// import logger from 'redux-logger'; 
-import {RootReducer} from './root-reducer';
+import { compose, createStore, applyMiddleware } from 'redux';
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import logger from 'redux-logger';
+// import thunk from 'redux-thunk';
+import createSagaMiddleware from 'redux-saga'; 
+
+import { rootSaga} from './root-saga'; 
+
+import { RootReducer } from './root-reducer';
 
 
-// Common middleware pattern
-const loggerMiddleware = (store) => (next) => (action) => { 
-    if (!action.type) { 
-        return next(action); 
-    }   
-    console.log('-----------------------------------------------------------  type:', action.type);
-    console.log('payload:', action.payload);
-    console.log('currentState', store.getState()); 
-
-    next(action);
-    console.log('Next state:', store.getState());
-}
-// root-reducer 
+const sagaMiddleware = createSagaMiddleware();
 
 
-const middleWares = [loggerMiddleware]; 
+const middleWares = [
+  process.env.NODE_ENV === 'development' && logger,
+  sagaMiddleware
+].filter(Boolean);
 
-const composedEnhancers = compose(applyMiddleware( ...middleWares )); 
+const composeEnhancer =
+  (process.env.NODE_ENV !== 'production' &&
+    window &&
+    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) ||
+  compose;
 
-export const store = legacy_createStore(RootReducer , undefined, composedEnhancers); 
-// export const store = createStore(rootReducer)
+const persistConfig = {
+  key: 'root',
+  storage,
+  blacklist: ['user'],
+};
 
 
+const persistedReducer = persistReducer(persistConfig, RootReducer);
 
+const composedEnhancers = composeEnhancer(applyMiddleware(...middleWares));
 
+export const store = createStore(
+  persistedReducer,
+  undefined,
+  composedEnhancers
+);
 
+sagaMiddleware.run(rootSaga);
 
-/** 
- * The store should store the data in it's most basic form. If you want an advanced 'view' on the 
- * data, you should use a custom selector
- */
+export const persistor = persistStore(store);

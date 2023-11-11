@@ -77,27 +77,29 @@ export const createUserDocumentFromAuth = async (
 ) => {
   if (!userAuth) return;
 
+  // this is where it does that funny thing where I need to create a doc ref (already having a userId) 
+  // and then use that to fetch the user record out of the dib. 
   const userDocRef = doc(db, 'users', userAuth.uid);
 
   const userSnapshot = await getDoc(userDocRef);
 
   if (!userSnapshot.exists()) {
-    const { displayName, email } = userAuth;
+    console.log('No existing user found, creating new:', additionalInformation)
+    const { displayName, email } = additionalInformation;
     const createdAt = new Date();
 
     try {
+      // this is the write to my db to save the user document 
       await setDoc(userDocRef, {
-        displayName,
-        email,
         createdAt,
-        ...additionalInformation,
+        ...additionalInformation
       });
     } catch (error) {
       console.log('error creating the user', error.message);
     }
   }
 
-  return userDocRef;
+  return userSnapshot;
 };
 
 export const createAuthUserWithEmailAndPassword = async (email, password) => {
@@ -115,5 +117,20 @@ export const loginInWithEmailAndPassword = async (email, password) => {
 
 export const signOutUser = async () => await signOut(auth);
 
-export const onAuthStateChangedListener = (callback) =>
-  onAuthStateChanged(auth, callback);
+export const onAuthStateChangedListener = (callback) => onAuthStateChanged(auth, callback);
+
+
+
+  // check if there is a current logged in user. 
+  export const getCurrentUser = () => { 
+    return new Promise( (resolve, reject) => { 
+
+      const unsubscribe = onAuthStateChanged(auth,
+        (userAuth) => { 
+          unsubscribe();
+          resolve(userAuth);
+      }, 
+      reject ); 
+
+    });
+  }

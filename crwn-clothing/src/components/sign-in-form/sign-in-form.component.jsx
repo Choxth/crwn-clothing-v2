@@ -1,13 +1,15 @@
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 
-import { loginInWithEmailAndPassword, signInWithGooglePopup} from '../../utils/firebase.utils'
+// import { loginInWithEmailAndPassword, signInWithGooglePopup} from '../../utils/firebase.utils'
 import FormInput from '../form-input/form-input.component';
 import Button, {BUTTON_TYPE_CLASSES} from '../button/button.component';
 
 
 // import '../sign-up-form/sign-up-form.styles.scss'
 import {SignInContainer, ButtonContainer} from './sign-in-form.styles.jsx'
+import { googleSignInStart, emailSignInStart } from '../../store/user/user.action'
 
 const defaultFormFields = {
     email: '',
@@ -19,6 +21,7 @@ const defaultFormFields = {
 const SignInForm = () => {
 
 
+    const dispatch = useDispatch();
     const [formFields, setFormFields] = useState(defaultFormFields);
 
     const { email, password } = formFields;
@@ -29,7 +32,8 @@ const SignInForm = () => {
 
     // The handler for the sign-in-with-google button
     const signInWithGoogle = async () => {
-        await signInWithGooglePopup();
+        // await signInWithGooglePopup();   going to dispatch the googleSignInPopup Saga action
+        dispatch (googleSignInStart()); 
     } 
         
 
@@ -43,9 +47,9 @@ const SignInForm = () => {
             // This is the original line that works 
             // const response = await loginInWithEmailAndPassword(email, password);
 
-            // how is this different? I need to learn this
-            await loginInWithEmailAndPassword(email, password);
-
+            // how is this different? I need to learn this. Gone with sagas 
+            // await loginInWithEmailAndPassword(email, password);
+            dispatch(emailSignInStart(email, password))
             resetFormFields();
 
         } catch (error) {
