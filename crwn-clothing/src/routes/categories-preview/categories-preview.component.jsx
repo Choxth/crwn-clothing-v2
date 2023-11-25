@@ -4,7 +4,7 @@ import { Fragment } from 'react';
 
 // import { CategoriesContext } from '../../contexts/categories.context'
 import CategoryPreview from '../../components/category-preview/category-preview.component';
-import {selectCategoriesMap, selectIsLoading } from '../../store/categories/category.selector.js'
+import {selectCategoriesMap, selectIsLoading } from '../../store/categories/category.selector'
 import Spinner from '../../components/spinner/spinner.component';
 
 import {useSelector} from 'react-redux';

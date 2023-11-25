@@ -13,6 +13,7 @@ import Shop from './routes/shop/shop.component';
 
 import { checkUserSession } from './store/user/user.action';
 
+
 const App = () => {
 
   const dispatch = useDispatch(); 
@@ -26,6 +27,7 @@ const App = () => {
     // instead of having this state listener that responds every time the state updates, 
     // we're going to wrap this in a promise inside of firebase utils. 
 
+    
     dispatch(checkUserSession());
     // return unsubscribe;
 
